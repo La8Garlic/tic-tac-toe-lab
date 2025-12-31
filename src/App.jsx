@@ -35,20 +35,16 @@ function App() {
   const [currentStep, setCurrentStep] = useState(0)
 
   const winner = calculateWinner(squares)
+  const isDraw = !winner && checkDraw(squares)
 
   function handleClick(index) {
-    if (squares[index] || winner) {
+    if (squares[index] || winner || isDraw) {
       return
     }
     const nextSquares = squares.slice()
     nextSquares[index] = xIsNext ? 'X' : 'O'
     setSquares(nextSquares)
     setXIsNext(!xIsNext)
-
-    // 检查是否平手
-    if (checkDraw(nextSquares)) {
-      console.log('平手！')
-    }
 
     // 记录历史
     setHistory(prev => {
@@ -116,11 +112,13 @@ function App() {
           </ul>
         </div>
       </div>
-      {winner && (
+      {(winner || isDraw) && (
         <div className="modal-overlay" onClick={handleRestart}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h2>🎉 游戏结束!</h2>
-            <p className="winner-text">玩家 {winner} 获胜!</p>
+            <p className="winner-text">
+              {winner ? `玩家 ${winner} 获胜!` : '平手!'}
+            </p>
             <button className="restart-btn" onClick={handleRestart}>
               重新开始
             </button>
