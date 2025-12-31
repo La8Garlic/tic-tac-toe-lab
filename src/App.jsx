@@ -30,13 +30,18 @@ function App() {
   const winner = calculateWinner(squares)
 
   function handleClick(index) {
-    if (squares[index]) {
+    if (squares[index] || winner) {
       return
     }
     const nextSquares = squares.slice()
     nextSquares[index] = xIsNext ? 'X' : 'O'
     setSquares(nextSquares)
     setXIsNext(!xIsNext)
+  }
+
+  function handleRestart() {
+    setSquares(Array(9).fill(null))
+    setXIsNext(true)
   }
 
   return (
@@ -54,6 +59,17 @@ function App() {
           />
         ))}
       </div>
+      {winner && (
+        <div className="modal-overlay" onClick={handleRestart}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h2>🎉 游戏结束!</h2>
+            <p className="winner-text">玩家 {winner} 获胜!</p>
+            <button className="restart-btn" onClick={handleRestart}>
+              重新开始
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
