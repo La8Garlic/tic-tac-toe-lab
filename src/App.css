@@ -5,6 +5,11 @@
   gap: 20px;
 }
 
+.status {
+  font-size: 1.2rem;
+  margin: 10px 0;
+}
+
 .board {
   display: grid;
   grid-template-columns: repeat(3, 100px);
