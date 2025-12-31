@@ -21,6 +21,7 @@ function App() {
   return (
     <div className="game-container">
       <h1>井字棋</h1>
+      <div className="status">当前玩家: X</div>
       <div className="board">
         {squares.map((value, index) => (
           <Square
