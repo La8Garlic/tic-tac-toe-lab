@@ -1,27 +1,8 @@
 import { useState } from 'react'
 import './App.css'
-
-function calculateWinner(squares) {
-  const lines = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // 横向
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // 纵向
-    [0, 4, 8], [2, 4, 6],             // 对角线
-  ]
-  for (const [a, b, c] of lines) {
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a]
-    }
-  }
-  return null
-}
-
-function Square({ value, onSquareClick }) {
-  return (
-    <div className="cell" onClick={onSquareClick}>
-      {value}
-    </div>
-  )
-}
+import Board from './components/Board'
+import HistoryList from './components/HistoryList'
+import GameOverModal from './components/GameOverModal'
 
 function App() {
   const [squares, setSquares] = useState(Array(9).fill(null))
@@ -29,14 +10,7 @@ function App() {
   const [history, setHistory] = useState([Array(9).fill(null)])
   const [currentStep, setCurrentStep] = useState(0)
 
-  const winner = calculateWinner(squares)
-
-  function handleClick(index) {
-    if (squares[index] || winner) {
-      return
-    }
-    const nextSquares = squares.slice()
-    nextSquares[index] = xIsNext ? 'X' : 'O'
+  function handlePlay(nextSquares) {
     setSquares(nextSquares)
     setXIsNext(!xIsNext)
 
@@ -56,12 +30,6 @@ function App() {
     setCurrentStep(0)
   }
 
-  // 获取某一步的玩家
-  function getPlayerForStep(stepIndex) {
-    // 偶数步是 X，奇数步是 O
-    return stepIndex % 2 === 0 ? 'X' : 'O'
-  }
-
   // 点击历史记录
   function jumpToStep(stepIndex) {
     const stepSquares = history[stepIndex]
@@ -71,52 +39,36 @@ function App() {
     setXIsNext(stepIndex % 2 === 0)
   }
 
+  // 计算游戏是否结束
+  function calculateWinner(squares) {
+    const lines = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // 横向
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // 纵向
+      [0, 4, 8], [2, 4, 6],             // 对角线
+    ]
+    for (const [a, b, c] of lines) {
+      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+        return squares[a]
+      }
+    }
+    return null
+  }
+
+  function checkDraw(squares) {
+    return squares.every(cell => cell !== null)
+  }
+
+  const winner = calculateWinner(squares)
+  const isDraw = !winner && checkDraw(squares)
+
   return (
     <div className="game-container">
       <h1>井字棋</h1>
-      <div className="status">
-        {winner ? `Winner: ${winner}` : `当前玩家: ${xIsNext ? 'X' : 'O'}`}
-      </div>
       <div className="game-layout">
-        <div className="board">
-          {squares.map((value, index) => (
-            <Square
-              key={index}
-              value={value}
-              onSquareClick={() => handleClick(index)}
-            />
-          ))}
-        </div>
-        <div className="history-list">
-          <h3>历史记录</h3>
-          <ul>
-            {history.slice(1).map((step, index) => {
-              const actualIndex = index + 1
-              const player = getPlayerForStep(actualIndex)
-              return (
-                <li
-                  key={actualIndex}
-                  className={actualIndex === currentStep ? 'active' : ''}
-                  onClick={() => jumpToStep(actualIndex)}
-                >
-                  第 {actualIndex} 步: {player}
-                </li>
-              )
-            })}
-          </ul>
-        </div>
+        <Board xIsNext={xIsNext} squares={squares} onPlay={handlePlay} />
+        <HistoryList history={history} currentStep={currentStep} onJumpToStep={jumpToStep} />
       </div>
-      {winner && (
-        <div className="modal-overlay" onClick={handleRestart}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>🎉 游戏结束!</h2>
-            <p className="winner-text">玩家 {winner} 获胜!</p>
-            <button className="restart-btn" onClick={handleRestart}>
-              重新开始
-            </button>
-          </div>
-        </div>
-      )}
+      <GameOverModal winner={winner} isDraw={isDraw} onRestart={handleRestart} />
     </div>
   )
 }
