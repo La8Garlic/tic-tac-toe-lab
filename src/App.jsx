@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 import Board from './components/Board'
+import HistoryList from './components/HistoryList'
 
 function App() {
   const [squares, setSquares] = useState(Array(9).fill(null))
@@ -26,12 +27,6 @@ function App() {
     setXIsNext(true)
     setHistory([Array(9).fill(null)])
     setCurrentStep(0)
-  }
-
-  // 获取某一步的玩家
-  function getPlayerForStep(stepIndex) {
-    // 偶数步是 X，奇数步是 O
-    return stepIndex % 2 === 0 ? 'X' : 'O'
   }
 
   // 点击历史记录
@@ -70,24 +65,7 @@ function App() {
       <h1>井字棋</h1>
       <div className="game-layout">
         <Board xIsNext={xIsNext} squares={squares} onPlay={handlePlay} />
-        <div className="history-list">
-          <h3>历史记录</h3>
-          <ul>
-            {history.slice(1).map((step, index) => {
-              const actualIndex = index + 1
-              const player = getPlayerForStep(actualIndex)
-              return (
-                <li
-                  key={actualIndex}
-                  className={actualIndex === currentStep ? 'active' : ''}
-                  onClick={() => jumpToStep(actualIndex)}
-                >
-                  第 {actualIndex} 步: {player}
-                </li>
-              )
-            })}
-          </ul>
-        </div>
+        <HistoryList history={history} currentStep={currentStep} onJumpToStep={jumpToStep} />
       </div>
       {(winner || isDraw) && (
         <div className="modal-overlay" onClick={handleRestart}>
