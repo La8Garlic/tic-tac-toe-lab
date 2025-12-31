@@ -1,32 +1,6 @@
 import { useState } from 'react'
 import './App.css'
-
-function calculateWinner(squares) {
-  const lines = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // 横向
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // 纵向
-    [0, 4, 8], [2, 4, 6],             // 对角线
-  ]
-  for (const [a, b, c] of lines) {
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a]
-    }
-  }
-  return null
-}
-
-function checkDraw(squares) {
-  // 棋盘已满且没有胜者，则为平手
-  return squares.every(cell => cell !== null)
-}
-
-function Square({ value, onSquareClick }) {
-  return (
-    <div className="cell" onClick={onSquareClick}>
-      {value}
-    </div>
-  )
-}
+import Board from './components/Board'
 
 function App() {
   const [squares, setSquares] = useState(Array(9).fill(null))
@@ -34,15 +8,7 @@ function App() {
   const [history, setHistory] = useState([Array(9).fill(null)])
   const [currentStep, setCurrentStep] = useState(0)
 
-  const winner = calculateWinner(squares)
-  const isDraw = !winner && checkDraw(squares)
-
-  function handleClick(index) {
-    if (squares[index] || winner || isDraw) {
-      return
-    }
-    const nextSquares = squares.slice()
-    nextSquares[index] = xIsNext ? 'X' : 'O'
+  function handlePlay(nextSquares) {
     setSquares(nextSquares)
     setXIsNext(!xIsNext)
 
@@ -77,22 +43,33 @@ function App() {
     setXIsNext(stepIndex % 2 === 0)
   }
 
+  // 计算游戏是否结束
+  function calculateWinner(squares) {
+    const lines = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // 横向
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // 纵向
+      [0, 4, 8], [2, 4, 6],             // 对角线
+    ]
+    for (const [a, b, c] of lines) {
+      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+        return squares[a]
+      }
+    }
+    return null
+  }
+
+  function checkDraw(squares) {
+    return squares.every(cell => cell !== null)
+  }
+
+  const winner = calculateWinner(squares)
+  const isDraw = !winner && checkDraw(squares)
+
   return (
     <div className="game-container">
       <h1>井字棋</h1>
-      <div className="status">
-        {winner ? `Winner: ${winner}` : `当前玩家: ${xIsNext ? 'X' : 'O'}`}
-      </div>
       <div className="game-layout">
-        <div className="board">
-          {squares.map((value, index) => (
-            <Square
-              key={index}
-              value={value}
-              onSquareClick={() => handleClick(index)}
-            />
-          ))}
-        </div>
+        <Board xIsNext={xIsNext} squares={squares} onPlay={handlePlay} />
         <div className="history-list">
           <h3>历史记录</h3>
           <ul>
@@ -115,7 +92,7 @@ function App() {
       {(winner || isDraw) && (
         <div className="modal-overlay" onClick={handleRestart}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>🎉 游戏结束!</h2>
+            <h2>游戏结束!</h2>
             <p className="winner-text">
               {winner ? `玩家 ${winner} 获胜!` : '平手!'}
             </p>
