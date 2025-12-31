@@ -26,6 +26,7 @@ function Square({ value, onSquareClick }) {
 function App() {
   const [squares, setSquares] = useState(Array(9).fill(null))
   const [xIsNext, setXIsNext] = useState(true)
+  const [history, setHistory] = useState([Array(9).fill(null)])
 
   const winner = calculateWinner(squares)
 
@@ -37,11 +38,24 @@ function App() {
     nextSquares[index] = xIsNext ? 'X' : 'O'
     setSquares(nextSquares)
     setXIsNext(!xIsNext)
+
+    // 记录历史
+    setHistory(prev => {
+      // 创建新历史记录：展开之前的记录 + 当前棋盘的深拷贝
+      const newHistory = [...prev, nextSquares.slice()]
+      console.log('=== 历史记录 ===')
+      newHistory.forEach((step, i) => {
+        console.log(`第 ${i} 步:`, step)
+      })
+      return newHistory
+    })
   }
 
   function handleRestart() {
     setSquares(Array(9).fill(null))
     setXIsNext(true)
+    setHistory([Array(9).fill(null)])
+    console.log('=== 游戏重新开始，历史记录已重置 ===')
   }
 
   return (
