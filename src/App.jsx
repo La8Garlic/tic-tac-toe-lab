@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import Board from './components/Board'
 import HistoryList from './components/HistoryList'
+import GameOverModal from './components/GameOverModal'
 
 function App() {
   const [squares, setSquares] = useState(Array(9).fill(null))
@@ -67,19 +68,7 @@ function App() {
         <Board xIsNext={xIsNext} squares={squares} onPlay={handlePlay} />
         <HistoryList history={history} currentStep={currentStep} onJumpToStep={jumpToStep} />
       </div>
-      {(winner || isDraw) && (
-        <div className="modal-overlay" onClick={handleRestart}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h2>游戏结束!</h2>
-            <p className="winner-text">
-              {winner ? `玩家 ${winner} 获胜!` : '平手!'}
-            </p>
-            <button className="restart-btn" onClick={handleRestart}>
-              重新开始
-            </button>
-          </div>
-        </div>
-      )}
+      <GameOverModal winner={winner} isDraw={isDraw} onRestart={handleRestart} />
     </div>
   )
 }
