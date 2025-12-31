@@ -15,6 +15,11 @@ function calculateWinner(squares) {
   return null
 }
 
+function checkDraw(squares) {
+  // 棋盘已满且没有胜者，则为平手
+  return squares.every(cell => cell !== null)
+}
+
 function Square({ value, onSquareClick }) {
   return (
     <div className="cell" onClick={onSquareClick}>
@@ -39,6 +44,11 @@ function App() {
     nextSquares[index] = xIsNext ? 'X' : 'O'
     setSquares(nextSquares)
     setXIsNext(!xIsNext)
+
+    // 检查是否平手
+    if (checkDraw(nextSquares)) {
+      console.log('平手！')
+    }
 
     // 记录历史
     setHistory(prev => {
