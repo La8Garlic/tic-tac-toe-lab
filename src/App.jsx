@@ -26,6 +26,8 @@ function Square({ value, onSquareClick }) {
 function App() {
   const [squares, setSquares] = useState(Array(9).fill(null))
   const [xIsNext, setXIsNext] = useState(true)
+  const [history, setHistory] = useState([Array(9).fill(null)])
+  const [currentStep, setCurrentStep] = useState(0)
 
   const winner = calculateWinner(squares)
 
@@ -37,11 +39,36 @@ function App() {
     nextSquares[index] = xIsNext ? 'X' : 'O'
     setSquares(nextSquares)
     setXIsNext(!xIsNext)
+
+    // 记录历史
+    setHistory(prev => {
+      // 创建新历史记录：展开之前的记录 + 当前棋盘的深拷贝
+      const newHistory = [...prev, nextSquares.slice()]
+      setCurrentStep(newHistory.length - 1)
+      return newHistory
+    })
   }
 
   function handleRestart() {
     setSquares(Array(9).fill(null))
     setXIsNext(true)
+    setHistory([Array(9).fill(null)])
+    setCurrentStep(0)
+  }
+
+  // 获取某一步的玩家
+  function getPlayerForStep(stepIndex) {
+    // 偶数步是 X，奇数步是 O
+    return stepIndex % 2 === 0 ? 'X' : 'O'
+  }
+
+  // 点击历史记录
+  function jumpToStep(stepIndex) {
+    const stepSquares = history[stepIndex]
+    setSquares(stepSquares.slice())
+    setCurrentStep(stepIndex)
+    // 根据步骤判断当前玩家
+    setXIsNext(stepIndex % 2 === 0)
   }
 
   return (
@@ -50,14 +77,34 @@ function App() {
       <div className="status">
         {winner ? `Winner: ${winner}` : `当前玩家: ${xIsNext ? 'X' : 'O'}`}
       </div>
-      <div className="board">
-        {squares.map((value, index) => (
-          <Square
-            key={index}
-            value={value}
-            onSquareClick={() => handleClick(index)}
-          />
-        ))}
+      <div className="game-layout">
+        <div className="board">
+          {squares.map((value, index) => (
+            <Square
+              key={index}
+              value={value}
+              onSquareClick={() => handleClick(index)}
+            />
+          ))}
+        </div>
+        <div className="history-list">
+          <h3>历史记录</h3>
+          <ul>
+            {history.slice(1).map((step, index) => {
+              const actualIndex = index + 1
+              const player = getPlayerForStep(actualIndex)
+              return (
+                <li
+                  key={actualIndex}
+                  className={actualIndex === currentStep ? 'active' : ''}
+                  onClick={() => jumpToStep(actualIndex)}
+                >
+                  第 {actualIndex} 步: {player}
+                </li>
+              )
+            })}
+          </ul>
+        </div>
       </div>
       {winner && (
         <div className="modal-overlay" onClick={handleRestart}>
