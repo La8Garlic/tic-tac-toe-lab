@@ -44,10 +44,6 @@ function App() {
     setHistory(prev => {
       // 创建新历史记录：展开之前的记录 + 当前棋盘的深拷贝
       const newHistory = [...prev, nextSquares.slice()]
-      console.log('=== 历史记录 ===')
-      newHistory.forEach((step, i) => {
-        console.log(`第 ${i} 步:`, step)
-      })
       setCurrentStep(newHistory.length - 1)
       return newHistory
     })
@@ -58,7 +54,6 @@ function App() {
     setXIsNext(true)
     setHistory([Array(9).fill(null)])
     setCurrentStep(0)
-    console.log('=== 游戏重新开始，历史记录已重置 ===')
   }
 
   // 获取某一步的玩家
@@ -70,7 +65,6 @@ function App() {
   // 点击历史记录
   function jumpToStep(stepIndex) {
     const stepSquares = history[stepIndex]
-    console.log(`跳转到第 ${stepIndex} 步，棋局状态:`, stepSquares)
     setSquares(stepSquares.slice())
     setCurrentStep(stepIndex)
     // 根据步骤判断当前玩家
