@@ -1,16 +1,35 @@
-# React + Vite
+# React 井字棋游戏
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 项目目标
 
-Currently, two official plugins are available:
+通过实现经典井字棋游戏，系统性地**学习** React 的核心概念和最佳实践。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 核心功能列表
 
-## React Compiler
+- 3×3 棋盘渲染，支持玩家点击落子
+- 两名玩家（X 和 O）轮流下棋
+- 实时显示当前轮到哪位玩家
+- 自动判定胜负（横、竖、斜三子连线）或平局
+- 完整的历史步骤记录
+- 支持“时间回溯”：点击历史步骤跳转到任意过去的棋盘状态
+- 高亮显示获胜的三子连线
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 技术栈
 
-## Expanding the ESLint configuration
+- **React**（函数组件 + Hooks）
+- **Vite**（快速开发构建工具）
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 启动方式
+
+```bash
+# 进入项目目录
+cd react-tic-tac-toe
+
+# 安装依赖
+npm install
+
+# 启动开发服务器
+npm run dev
+```
+
+打开浏览器访问 `http://localhost:5173`（端口可能略有不同，Vite 会提示）即可看到游戏。
