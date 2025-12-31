@@ -11,13 +11,16 @@ function App() {
   const [currentStep, setCurrentStep] = useState(0)
 
   function handlePlay(nextSquares) {
+    // 先更新棋盘和玩家
     setSquares(nextSquares)
     setXIsNext(!xIsNext)
 
-    // 记录历史
+    // 同时更新 history 和 currentStep
     setHistory(prev => {
-      // 创建新历史记录：展开之前的记录 + 当前棋盘的深拷贝
-      const newHistory = [...prev, nextSquares.slice()]
+      // 如果用户回溯到了历史步骤，只保留到 currentStep 为止的记录
+      // 然后追加新的棋盘状态
+      const newHistory = [...prev.slice(0, currentStep + 1), nextSquares.slice()]
+      // 更新 currentStep 为新的最后一步
       setCurrentStep(newHistory.length - 1)
       return newHistory
     })
@@ -37,6 +40,8 @@ function App() {
     setCurrentStep(stepIndex)
     // 根据步骤判断当前玩家
     setXIsNext(stepIndex % 2 === 0)
+    // 截断 history，只保留到当前回溯步骤为止的记录
+    setHistory(prev => prev.slice(0, stepIndex + 1))
   }
 
   // 计算游戏是否结束
