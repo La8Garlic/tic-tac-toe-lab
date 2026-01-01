@@ -1,6 +1,6 @@
 function HistoryList({ history, currentStep, onJumpToStep }) {
   function getPlayerForStep(stepIndex) {
-    return stepIndex % 2 === 0 ? 'X' : 'O'
+    return stepIndex % 2 === 0 ? 'O' : 'X'
   }
 
   return (
