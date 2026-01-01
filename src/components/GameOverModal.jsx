@@ -1,6 +1,15 @@
-function GameOverModal({ winner, isDraw, onRestart }) {
-  // 当没有获胜者也不是平手时，不显示弹窗
-  if (!winner && !isDraw) {
+/**
+ * 游戏结束弹窗组件
+ * 纯展示组件，负责渲染游戏结束弹窗
+ * @component
+ * @param {Object} props - 组件属性
+ * @param {boolean} props.isVisible - 是否显示弹窗
+ * @param {string|null} props.winner - 获胜玩家 ('X', 'O' 或 null)
+ * @param {boolean} props.isDraw - 是否平局
+ * @param {Function} props.onRestart - 重新开始回调函数
+ */
+function GameOverModal({ isVisible, winner, isDraw, onRestart }) {
+  if (!isVisible) {
     return null
   }
 
@@ -20,3 +29,4 @@ function GameOverModal({ winner, isDraw, onRestart }) {
 }
 
 export default GameOverModal
+
