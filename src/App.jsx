@@ -3,11 +3,18 @@ import './App.css'
 import Board from './components/Board'
 import HistoryList from './components/HistoryList'
 import GameOverModal from './components/GameOverModal'
+import { INITIAL_BOARD } from './constants/gameConfig'
+import { calculateWinner, checkIsDraw } from './utils/gameLogic'
 
+/**
+ * 主应用组件
+ * 负责游戏状态管理和组件协调
+ * @component
+ */
 function App() {
-  const [squares, setSquares] = useState(Array(9).fill(null))
+  const [squares, setSquares] = useState(INITIAL_BOARD)
   const [xIsNext, setXIsNext] = useState(true)
-  const [history, setHistory] = useState([Array(9).fill(null)])
+  const [history, setHistory] = useState([INITIAL_BOARD])
   const [currentStep, setCurrentStep] = useState(0)
 
   function handlePlay(nextSquares) {
@@ -26,45 +33,31 @@ function App() {
     })
   }
 
+  /**
+   * 重新开始游戏
+   * 重置所有游戏状态到初始值
+   */
   function handleRestart() {
-    setSquares(Array(9).fill(null))
+    setSquares(INITIAL_BOARD)
     setXIsNext(true)
-    setHistory([Array(9).fill(null)])
+    setHistory([INITIAL_BOARD])
     setCurrentStep(0)
   }
 
-  // 点击历史记录
+  /**
+   * 跳转到指定历史步骤
+   * @param {number} stepIndex - 目标步骤索引
+   */
   function jumpToStep(stepIndex) {
     const stepSquares = history[stepIndex]
     setSquares(stepSquares.slice())
     setCurrentStep(stepIndex)
-    // 根据步骤判断当前玩家
     setXIsNext(stepIndex % 2 === 0)
-    // 截断 history，只保留到当前回溯步骤为止的记录
     setHistory(prev => prev.slice(0, stepIndex + 1))
   }
 
-  // 计算游戏是否结束
-  function calculateWinner(squares) {
-    const lines = [
-      [0, 1, 2], [3, 4, 5], [6, 7, 8], // 横向
-      [0, 3, 6], [1, 4, 7], [2, 5, 8], // 纵向
-      [0, 4, 8], [2, 4, 6],             // 对角线
-    ]
-    for (const [a, b, c] of lines) {
-      if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-        return squares[a]
-      }
-    }
-    return null
-  }
-
-  function checkDraw(squares) {
-    return squares.every(cell => cell !== null)
-  }
-
   const winner = calculateWinner(squares)
-  const isDraw = !winner && checkDraw(squares)
+  const isDraw = !winner && checkIsDraw(squares)
 
   return (
     <div className="game-container">

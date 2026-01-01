@@ -1,29 +1,24 @@
 import { useState } from 'react'
 import Square from './Square'
+import { calculateWinner, checkIsDraw } from '../utils/gameLogic'
 
-function calculateWinner(squares) {
-  const lines = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // 横向
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // 纵向
-    [0, 4, 8], [2, 4, 6],             // 对角线
-  ]
-  for (const [a, b, c] of lines) {
-    if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a]
-    }
-  }
-  return null
-}
-
-function checkDraw(squares) {
-  // 棋盘已满且没有胜者，则为平手
-  return squares.every(cell => cell !== null)
-}
-
+/**
+ * 棋盘组件
+ * 负责渲染棋盘和处理格子点击事件
+ * @component
+ * @param {Object} props - 组件属性
+ * @param {boolean} props.xIsNext - 是否 X 玩家回合
+ * @param {Array<string|null>} props.squares - 棋盘数组
+ * @param {Function} props.onPlay - 落子回调函数
+ */
 function Board({ xIsNext, squares, onPlay }) {
   const winner = calculateWinner(squares)
-  const isDraw = !winner && checkDraw(squares)
+  const isDraw = !winner && checkIsDraw(squares)
 
+  /**
+   * 处理格子点击事件
+   * @param {number} index - 被点击格子的索引
+   */
   function handleClick(index) {
     if (squares[index] || winner || isDraw) {
       return
