@@ -4,6 +4,7 @@ import HistoryList from './components/HistoryList'
 import GameOverModal from './components/GameOverModal'
 import useGameState from './hooks/useGameState'
 import useGameHistory from './hooks/useGameHistory'
+import { PLAYER_X, PLAYER_O } from './constants/gameConfig'
 
 /**
  * 主应用组件
@@ -17,11 +18,21 @@ function App() {
   const { history, currentStep, addHistory, jumpToStep, resetHistory } = useGameHistory()
 
   /**
-   * 处理落子操作
-   * 更新游戏状态并添加到历史记录
-   * @param {Array<string|null>} nextSquares - 落子后的棋盘状态
+   * 处理格子点击
+   * 验证落子合法性并更新游戏状态
+   * @param {number} index - 被点击格子的索引
    */
-  function handlePlay(nextSquares) {
+  function handleSquareClick(index) {
+    // 如果格子已有值或游戏已结束，则忽略
+    if (squares[index] || winner || isDraw) {
+      return
+    }
+
+    // 创建新的棋盘状态
+    const nextSquares = squares.slice()
+    nextSquares[index] = xIsNext ? PLAYER_X : PLAYER_O
+
+    // 更新游戏状态并添加到历史记录
     handlePlayState(nextSquares)
     addHistory(nextSquares)
   }
@@ -46,11 +57,19 @@ function App() {
     setBoardState(stepSquares.slice(), stepIndex)
   }
 
+  // 计算状态显示文本
+  const statusText = winner
+    ? `Winner: ${winner}`
+    : isDraw
+      ? '平局!'
+      : `当前玩家: ${xIsNext ? PLAYER_X : PLAYER_O}`
+
   return (
     <div className="game-container">
       <h1>井字棋</h1>
+      <div className="status">{statusText}</div>
       <div className="game-layout">
-        <Board xIsNext={xIsNext} squares={squares} onPlay={handlePlay} />
+        <Board squares={squares} onSquareClick={handleSquareClick} />
         <HistoryList history={history} currentStep={currentStep} onJumpToStep={handleJumpToStep} />
       </div>
       <GameOverModal winner={winner} isDraw={isDraw} onRestart={handleRestart} />
