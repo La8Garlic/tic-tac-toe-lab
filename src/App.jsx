@@ -75,6 +75,9 @@ function App() {
     }
   })
 
+  // 判断是否显示游戏结束弹窗
+  const showGameOverModal = winner || isDraw
+
   return (
     <div className="game-container">
       <h1>井字棋</h1>
@@ -83,7 +86,12 @@ function App() {
         <Board squares={squares} onSquareClick={handleSquareClick} />
         <HistoryList historyItems={historyItems} onJumpToStep={handleJumpToStep} />
       </div>
-      <GameOverModal winner={winner} isDraw={isDraw} onRestart={handleRestart} />
+      <GameOverModal
+        isVisible={showGameOverModal}
+        winner={winner}
+        isDraw={isDraw}
+        onRestart={handleRestart}
+      />
     </div>
   )
 }
