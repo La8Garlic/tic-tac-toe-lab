@@ -5,6 +5,7 @@ import GameOverModal from './components/GameOverModal'
 import useGameState from './hooks/useGameState'
 import useGameHistory from './hooks/useGameHistory'
 import { PLAYER_X, PLAYER_O } from './constants/gameConfig'
+import { getPlayerForStep } from './utils/gameLogic'
 
 /**
  * 主应用组件
@@ -64,13 +65,23 @@ function App() {
       ? '平局!'
       : `当前玩家: ${xIsNext ? PLAYER_X : PLAYER_O}`
 
+  // 计算历史记录项数据
+  const historyItems = history.slice(1).map((_, index) => {
+    const actualIndex = index + 1
+    return {
+      index: actualIndex,
+      player: getPlayerForStep(actualIndex - 1),  // actualIndex-1 才是正确的落子玩家
+      isActive: actualIndex === currentStep
+    }
+  })
+
   return (
     <div className="game-container">
       <h1>井字棋</h1>
       <div className="status">{statusText}</div>
       <div className="game-layout">
         <Board squares={squares} onSquareClick={handleSquareClick} />
-        <HistoryList history={history} currentStep={currentStep} onJumpToStep={handleJumpToStep} />
+        <HistoryList historyItems={historyItems} onJumpToStep={handleJumpToStep} />
       </div>
       <GameOverModal winner={winner} isDraw={isDraw} onRestart={handleRestart} />
     </div>
